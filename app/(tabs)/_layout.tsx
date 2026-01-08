@@ -4,54 +4,53 @@ import { Tabs } from 'expo-router'
 
 const _layout = () => {
     return (
-        <View>
-            <Tabs screenOptions={{ tabBarPosition: 'bottom' }}>
-                <Tabs.Screen
-                    name='index'
-                    options={{
-                        title: 'Home',
-                        headerShown: false
-                    }}
+        <Tabs
+            screenOptions={{
+                tabBarPosition: 'bottom', 
+                headerShown: false,
+            }}
+        >
+            <Tabs.Screen
+                name='index'
+                options={{
+                    title: 'Home',
 
-                />
-                <Tabs.Screen
-                    name='coupon'
-                    options={{
-                        title: 'Coupons',
-                        headerShown: false
-                        
-                    }}
+                }}
 
-                />
-                <Tabs.Screen
-                    name='search'
-                    options={{
-                        title: 'Search',
-                        headerShown: false
-                        
-                    }}
+            />
+            <Tabs.Screen
+                name='coupon'
+                options={{
+                    title: 'Coupons',
 
-                />
-                <Tabs.Screen
-                    name='cart'
-                    options={{
-                        title: 'Cart',
-                        headerShown: false
-                        
-                    }}
+                }}
 
-                />
-                <Tabs.Screen
-                    name='profile'
-                    options={{
-                        title: 'profile',
-                        headerShown: false
-                        
-                    }}
+            />
+            <Tabs.Screen
+                name='search'
+                options={{
+                    title: 'Search',
 
-                />
-            </Tabs>
-        </View>
+                }}
+
+            />
+            <Tabs.Screen
+                name='cart'
+                options={{
+                    title: 'Cart',
+
+                }}
+
+            />
+            <Tabs.Screen
+                name='profile'
+                options={{
+                    title: 'profile',
+
+                }}
+
+            />
+        </Tabs>
     )
 }
 
