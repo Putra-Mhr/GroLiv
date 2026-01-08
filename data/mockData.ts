@@ -2,13 +2,13 @@
 // Database-ready structures - replace with actual API calls
 
 export interface Banner {
-    id: string;
-    title: string;
-    subtitle: string;
-    buttonText: string;
-    image: string;
-    backgroundColor: string;
+    id: string
+    title: string
+    subtitle: string
+    image: string
+    buttonText: string
 }
+
 
 export interface Category {
     id: string;
@@ -36,7 +36,6 @@ export const mockBanners: Banner[] = [
         subtitle: 'Buy now for a great discount!',
         buttonText: 'More Detail',
         image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=400',
-        backgroundColor: '#4CAF50',
     },
     {
         id: '2',
@@ -44,7 +43,6 @@ export const mockBanners: Banner[] = [
         subtitle: 'Fresh from the farm!',
         buttonText: 'Shop Now',
         image: 'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?w=400',
-        backgroundColor: '#FF9800',
     },
 ];
 
@@ -54,7 +52,6 @@ export const mockCategories: Category[] = [
     { id: '3', name: 'Beverages', icon: 'wine', color: '#FFF3E0' },
     { id: '4', name: 'Grocery', icon: 'basket', color: '#E3F2FD' },
     { id: '5', name: 'Edible oil', icon: 'water', color: '#E0F7FA' },
-    { id: '6', name: 'Household', icon: 'home', color: '#F3E5F5' },
 ];
 
 export const mockProducts: Product[] = [

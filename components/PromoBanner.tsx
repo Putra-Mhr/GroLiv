@@ -1,51 +1,88 @@
-import { Ionicons } from '@expo/vector-icons';
-import React, { useEffect, useRef, useState } from 'react';
-import { Dimensions, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Banner } from '../data/mockData';
+import { Ionicons } from '@expo/vector-icons'
+import React, { useEffect, useRef, useState } from 'react'
+import {
+    Dimensions,
+    FlatList,
+    Image,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+} from 'react-native'
+import { Banner } from '../data/mockData'
 
-const { width: screenWidth } = Dimensions.get('window');
-const BANNER_WIDTH = screenWidth - 32;
+/* ================= CONFIG ================= */
+
+const { width: screenWidth } = Dimensions.get('window')
+const HORIZONTAL_PADDING = 16
+const ITEM_SPACING = 16
+const BANNER_WIDTH = screenWidth - HORIZONTAL_PADDING * 2
+const SNAP_INTERVAL = BANNER_WIDTH + ITEM_SPACING
+
+/* ================= TYPES ================= */
 
 interface PromoBannerProps {
-    banners: Banner[];
-    autoScrollInterval?: number;
+    banners: Banner[]
+    autoScrollInterval?: number
 }
 
-export default function PromoBanner({ banners, autoScrollInterval = 4000 }: PromoBannerProps) {
-    const flatListRef = useRef<FlatList>(null);
-    const [activeIndex, setActiveIndex] = useState(0);
+/* ================= COMPONENT ================= */
 
+export default function PromoBanner({
+    banners,
+    autoScrollInterval = 4000,
+}: PromoBannerProps) {
+    const flatListRef = useRef<FlatList>(null)
+    const [activeIndex, setActiveIndex] = useState(0)
+
+    /* ---------- AUTO SCROLL ---------- */
     useEffect(() => {
-        if (banners.length <= 1) return;
+        if (banners.length <= 1) return
 
         const interval = setInterval(() => {
-            const nextIndex = (activeIndex + 1) % banners.length;
-            flatListRef.current?.scrollToIndex({ index: nextIndex, animated: true });
-            setActiveIndex(nextIndex);
-        }, autoScrollInterval);
+            const nextIndex = (activeIndex + 1) % banners.length
 
-        return () => clearInterval(interval);
-    }, [activeIndex, banners.length, autoScrollInterval]);
+            flatListRef.current?.scrollToOffset({
+                offset: nextIndex * SNAP_INTERVAL,
+                animated: true,
+            })
 
+            setActiveIndex(nextIndex)
+        }, autoScrollInterval)
+
+        return () => clearInterval(interval)
+    }, [activeIndex, banners.length, autoScrollInterval])
+
+    /* ---------- RENDER ITEM ---------- */
     const renderBanner = ({ item }: { item: Banner }) => (
-        <View style={[styles.bannerContainer, { backgroundColor: item.backgroundColor }]}>
-            <View style={styles.bannerContent}>
-                <Text style={styles.bannerTitle}>{item.title}</Text>
-                <Text style={styles.bannerSubtitle}>{item.subtitle}</Text>
-                <TouchableOpacity style={styles.bannerButton}>
-                    <Text style={styles.bannerButtonText}>{item.buttonText}</Text>
-                    <Ionicons name="arrow-forward" size={16} color="#FFFFFF" />
-                </TouchableOpacity>
-            </View>
-            <Image source={{ uri: item.image }} style={styles.bannerImage} />
-        </View>
-    );
+        <View style={styles.bannerWrapper}>
+            <View style={styles.bannerContainer}>
+                {/* Background Image */}
+                <Image source={{ uri: item.image }} style={styles.backgroundImage} />
 
-    const onViewableItemsChanged = useRef(({ viewableItems }: any) => {
-        if (viewableItems.length > 0) {
-            setActiveIndex(viewableItems[0].index || 0);
-        }
-    }).current;
+                {/* Dark Overlay */}
+                <View style={styles.overlay} />
+
+                {/* Content */}
+                <View style={styles.bannerContent}>
+                    <Text style={styles.bannerTitle}>{item.title}</Text>
+                    <Text style={styles.bannerSubtitle}>{item.subtitle}</Text>
+
+                    <TouchableOpacity style={styles.bannerButton}>
+                        <Text style={styles.bannerButtonText}>{item.buttonText}</Text>
+                        <Ionicons
+                            name="arrow-forward"
+                            size={14}
+                            color="#FFFFFF"
+                            style={{ marginLeft: 6 }}
+                        />
+                    </TouchableOpacity>
+                </View>
+            </View>
+        </View>
+    )
+
+    /* ================= RENDER ================= */
 
     return (
         <View style={styles.container}>
@@ -55,12 +92,25 @@ export default function PromoBanner({ banners, autoScrollInterval = 4000 }: Prom
                 renderItem={renderBanner}
                 keyExtractor={(item) => item.id}
                 horizontal
-                pagingEnabled
                 showsHorizontalScrollIndicator={false}
-                onViewableItemsChanged={onViewableItemsChanged}
-                viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
-                contentContainerStyle={styles.flatListContent}
+
+                snapToInterval={SNAP_INTERVAL}
+                snapToAlignment="start"
+                decelerationRate="fast"
+
+                contentContainerStyle={{
+                    paddingHorizontal: HORIZONTAL_PADDING,
+                }}
+
+                onMomentumScrollEnd={(event) => {
+                    const index = Math.round(
+                        event.nativeEvent.contentOffset.x / SNAP_INTERVAL
+                    )
+                    setActiveIndex(index)
+                }}
             />
+
+            {/* Pagination */}
             <View style={styles.pagination}>
                 {banners.map((_, index) => (
                     <View
@@ -73,70 +123,89 @@ export default function PromoBanner({ banners, autoScrollInterval = 4000 }: Prom
                 ))}
             </View>
         </View>
-    );
+    )
 }
+
+/* ================= STYLES ================= */
 
 const styles = StyleSheet.create({
     container: {
-        marginVertical: 16,
+        marginTop: 8,
+        marginBottom: 16,
     },
-    flatListContent: {
-        paddingHorizontal: 16,
-    },
-    bannerContainer: {
+
+    bannerWrapper: {
         width: BANNER_WIDTH,
+        marginRight: ITEM_SPACING,
+    },
+
+    bannerContainer: {
+        width: '100%',
         height: 140,
-        borderRadius: 16,
-        flexDirection: 'row',
+        borderRadius: 18,
         overflow: 'hidden',
-        marginRight: 16,
-    },
-    bannerContent: {
-        flex: 1,
-        padding: 20,
         justifyContent: 'center',
+        backgroundColor: '#000',
     },
+
+    backgroundImage: {
+        ...StyleSheet.absoluteFillObject,
+        resizeMode: 'cover',
+    },
+
+    overlay: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: 'rgba(0,0,0,0.35)',
+    },
+
+    bannerContent: {
+        paddingHorizontal: 20,
+        paddingVertical: 18,
+        maxWidth: '75%',
+    },
+
     bannerTitle: {
         fontSize: 22,
-        fontWeight: 'bold',
+        fontWeight: '700',
         color: '#FFFFFF',
-        marginBottom: 4,
+        marginBottom: 6,
     },
+
     bannerSubtitle: {
-        fontSize: 14,
+        fontSize: 13,
         color: 'rgba(255,255,255,0.9)',
-        marginBottom: 12,
+        lineHeight: 18,
+        marginBottom: 14,
     },
+
     bannerButton: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 4,
     },
+
     bannerButtonText: {
-        fontSize: 14,
+        fontSize: 13,
+        fontWeight: '600',
         color: '#FFFFFF',
         textDecorationLine: 'underline',
     },
-    bannerImage: {
-        width: 140,
-        height: '100%',
-        resizeMode: 'cover',
-    },
+
     pagination: {
         flexDirection: 'row',
         justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: 12,
+        marginTop: 14,
         gap: 6,
     },
+
     paginationDot: {
         width: 8,
         height: 8,
         borderRadius: 4,
-        backgroundColor: 'rgba(76, 175, 80, 0.3)',
+        backgroundColor: 'rgba(0,0,0,0.25)',
     },
+
     paginationDotActive: {
+        width: 24,
         backgroundColor: '#4CAF50',
-        width: 20,
     },
-});
+})

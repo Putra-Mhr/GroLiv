@@ -16,7 +16,7 @@ const _layout = () => {
                 tabBarActiveTintColor: PRIMARY_GREEN,
                 tabBarInactiveTintColor: INACTIVE_GRAY,
                 tabBarStyle: {
-                    height: Platform.OS === 'ios' ? 85 : 70,
+                    height: Platform.OS === 'ios' ? 85 : 85,
                     paddingTop: 10,
                     paddingBottom: Platform.OS === 'ios' ? 25 : 10,
                     backgroundColor: '#FFFFFF',
