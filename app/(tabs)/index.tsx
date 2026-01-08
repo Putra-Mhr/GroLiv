@@ -1,5 +1,6 @@
 import React from 'react';
 import { ScrollView, StatusBar, StyleSheet, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import CategoryList from '../../components/CategoryList';
 import ProductGrid from '../../components/ProductGrid';
 import PromoBanner from '../../components/PromoBanner';
@@ -8,7 +9,7 @@ import { mockBanners, mockCategories, mockProducts } from '../../data/mockData';
 
 export default function Home() {
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <StatusBar barStyle="dark-content" />
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {/* Green gradient header background */}
@@ -35,7 +36,7 @@ export default function Home() {
           />
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 
