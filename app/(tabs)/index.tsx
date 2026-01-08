@@ -1,11 +1,66 @@
-import { Text, View } from "react-native";
+import React from 'react';
+import { ScrollView, StatusBar, StyleSheet, View } from 'react-native';
+import CategoryList from '../../components/CategoryList';
+import ProductGrid from '../../components/ProductGrid';
+import PromoBanner from '../../components/PromoBanner';
+import SearchHeader from '../../components/SearchHeader';
+import { mockBanners, mockCategories, mockProducts } from '../../data/mockData';
 
 export default function Home() {
   return (
-    <View className="flex-1 bg-white justify-center items-center">
-      <Text className="text-5xl font-bold text-primary">
-        Welcome 🎉
-      </Text>
+    <View style={styles.container}>
+      <StatusBar barStyle="dark-content" />
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        {/* Green gradient header background */}
+        <SearchHeader />
+
+        {/* Promo Banner Carousel */}
+        <View style={styles.bannerSection}>
+          <PromoBanner banners={mockBanners} />
+        </View>
+
+        {/* White card container for categories and products */}
+        <View style={styles.whiteContainer}>
+          {/* Categories Section */}
+          <CategoryList
+            categories={mockCategories}
+            onCategoryPress={(category) => console.log('Category pressed:', category.name)}
+          />
+
+          {/* Products Grid */}
+          <ProductGrid
+            products={mockProducts}
+            onProductPress={(product) => console.log('Product pressed:', product.name)}
+            onFavoritePress={(product) => console.log('Favorite pressed:', product.name)}
+          />
+        </View>
+      </ScrollView>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#9cec56ff',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  headerGradient: {
+    paddingTop: 50,
+    paddingBottom: 10,
+  },
+  bannerSection: {
+    backgroundColor: '#9cec56ff',
+    paddingBottom: 20,
+  },
+  whiteContainer: {
+    flex: 1,
+    backgroundColor: '#F8F8F8',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    paddingTop: 8,
+    minHeight: 500,
+  },
+});
